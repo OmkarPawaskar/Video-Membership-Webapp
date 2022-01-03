@@ -1,18 +1,31 @@
 {% extends "base.html" %}
-
 {% block content %}
+<h1>Sign Up</h1>
+
+{% if errors %}
+<div>
+<p>An error occurred please check following: </p>
+    {% for error in errors %}
+        <li><b>{{error.loc[0] }} : </b> {{error.msg}}</li>
+    {% endfor %}
+</div>
+{% endif %}
+
+{{data}}
+
+
 <form method="POST">
     <div>
-        <label>Email</label>
+        <label for="email">Email</label>
         <input type="email" name="email" placeholder="your@email.com" /> 
     </div>
     <div>
-        <label>Password</label>
+        <label for="password">Password</label>
         <input type="password" name="password" placeholder="your password"/>
     </div>
     <div>
-        <label>Confirm Password</label>
-        <input type="password" name="password_confim" placeholder="confirm your password"/>
+        <label for="password_confirm">Confirm Password</label>
+        <input type="password" name="password_confirm" placeholder="confirm your password"/>
     </div>
     <button type="submit">Sign Up</button>
 </form>
