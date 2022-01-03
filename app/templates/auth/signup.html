@@ -2,16 +2,8 @@
 {% block content %}
 <h1>Sign Up</h1>
 
-{% if errors %}
-<div>
-<p>An error occurred please check following: </p>
-    {% for error in errors %}
-        <li><b>{{error.loc[0] }} : </b> {{error.msg}}</li>
-    {% endfor %}
-</div>
-{% endif %}
+{% include 'snippets/form_error.html' %}
 
-{{data}}
 
 
 <form method="POST">
