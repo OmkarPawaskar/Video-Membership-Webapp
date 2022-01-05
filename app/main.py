@@ -32,7 +32,7 @@ def homepage(request : Request):
     context = {
         "abc" : "abc"
     }
-    return render(request, "home.html", context)
+    return render(request, "home.html", context, status_code = 200)
 
 @app.get('/login', response_class=HTMLResponse)
 def login_get_view(request : Request):
@@ -47,7 +47,14 @@ def login_get_view(request : Request,
         "password" : password,
     }
     data, errors = utils.valid_schema_data_or_error(raw_data, UserLoginSchema)
-    return render(request,"auth/login.html", {})
+    context = {
+        "data" : data,
+        "errors" : errors,
+    }
+    if len(errors) > 0:
+        return render(request,"auth/login.html", context, status_code = 400 )
+        
+    return render(request,"auth/login.html", context)
 
 
 @app.get('/signup', response_class=HTMLResponse)
@@ -66,10 +73,13 @@ def signup_get_view(request : Request,
         "password_confirm" : password_confirm
     }
     data, errors = utils.valid_schema_data_or_error(raw_data, UserSignupSchema)
-    return render(request,"auth/signup.html", {
+    context = {
         "data" : data,
         "errors" : errors,
-    })
+    }
+    if len(errors) > 0:
+        return render(request,"auth/signup.html", context, status_code = 400 )
+    return render(request,"auth/signup.html", context)
 
 
 @app.get('/users')
