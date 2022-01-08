@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Login Up</h1>
+<h1>Login</h1>
 
 {% include 'snippets/form_error.html' %}
 
+{% if logged_in %}
+    <p>You are already logged in! Would you like to logout?</p>
+{% else %}
 <form method="POST">
     <div>
         <label>Email</label>
@@ -15,5 +18,5 @@
     </div>
     <button type="submit">Login</button>
 </form>
-
+{% endif %}
 {% endblock %}

@@ -1,4 +1,3 @@
-from pydantic.networks import validate_email
 from app import config
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -17,7 +16,7 @@ def render(request, template_name, context = {} , status_code: int = 200, cookie
     #print(responses.cookies)
     responses.set_cookie(key="darkmode", value=1)
 
-    if len(cookies.keys) > 0:
+    if len(cookies.keys()) > 0:
         #set http only cookies
         for k,v in cookies.items():
             responses.set_cookie(key=k ,value=v ,httponly=True) #httponly arg ensures user is not able to edit via js console.

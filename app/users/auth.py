@@ -1,6 +1,6 @@
 import datetime
 from jose import jwt, ExpiredSignatureError
-from models import User
+from .models import User
 from app import config
 
 settings = config.get_settings()
