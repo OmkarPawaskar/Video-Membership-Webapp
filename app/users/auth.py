@@ -26,7 +26,7 @@ def login(user_obj, expires = 5):
 
 def verify_user_id(token):
     #step 3
-    data = None
+    data = {}
     try:
         data = jwt.decode(token, settings.secret_key, algorithms=[settings.jwt_algorithm])
     except ExpiredSignatureError as e:

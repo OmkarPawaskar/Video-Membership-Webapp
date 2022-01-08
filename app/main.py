@@ -10,6 +10,7 @@ from .users.schemas import (
     UserSignupSchema,
     UserLoginSchema
 )
+from .users.decorators import login_required
 from . import db, utils, shortcuts
 from .shortcuts import redirect, render
 
@@ -33,6 +34,16 @@ def homepage(request : Request):
         "abc" : "abc"
     }
     return render(request, "home.html", context, status_code = 200)
+
+@app.get('/account', response_class=HTMLResponse)
+@login_required
+def account_view(request : Request):
+    """
+    hello world
+    """
+    context = {}
+    return render(request, "account.html", context)
+
 
 @app.get('/login', response_class=HTMLResponse)
 def login_get_view(request : Request):
