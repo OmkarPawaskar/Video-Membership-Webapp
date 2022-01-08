@@ -11,7 +11,7 @@ from .users.schemas import (
     UserLoginSchema
 )
 from . import db, utils, shortcuts
-from .shortcuts import render
+from .shortcuts import redirect, render
 
 
 app = FastAPI()
@@ -54,7 +54,7 @@ def login_get_view(request : Request,
     }
     if len(errors) > 0:
         return render(request,"auth/login.html", context, status_code = 400 )
-    return render(request,"auth/login.html", {"logged_in" : True},cookies=data)
+    return redirect("/", cookies=data)
 
 
 @app.get('/signup', response_class=HTMLResponse)
@@ -79,7 +79,7 @@ def signup_get_view(request : Request,
     }
     if len(errors) > 0:
         return render(request,"auth/signup.html", context, status_code = 400 )
-    return render(request,"auth/signup.html", context)
+    return redirect('/login')
 
 
 @app.get('/users')
