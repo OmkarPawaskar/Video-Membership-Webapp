@@ -2,9 +2,11 @@ import json
 import pathlib
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
-
+from starlette.middleware.authentication import AuthenticationMiddleware
 from cassandra.cqlengine.management import sync_table
 from pydantic.error_wrappers import ValidationError
+
+from .users.backends import JWTCookieBackend
 from .users.models import User
 from .users.schemas import (
     UserSignupSchema,
@@ -16,6 +18,7 @@ from .shortcuts import redirect, render
 
 
 app = FastAPI()
+app.add_middleware(AuthenticationMiddleware, backend = JWTCookieBackend())
 
 #settings = get_settings()
 DB_SESSION = None
@@ -31,10 +34,10 @@ def on_startup():
 
 @app.get('/', response_class=HTMLResponse)
 def homepage(request : Request):
-    context = {
-        "abc" : "abc"
-    }
-    return render(request, "home.html", context, status_code = 200)
+    print(request.user.username)
+    if request.user.is_authenticated:
+        return render(request, "dashboard.html", {}, status_code=200)
+    return render(request, "home.html", {})
 
 @app.get('/account', response_class=HTMLResponse)
 @login_required
