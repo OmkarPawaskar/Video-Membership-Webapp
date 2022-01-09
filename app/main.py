@@ -17,9 +17,10 @@ from .shortcuts import redirect, render
 
 app = FastAPI()
 
-
 #settings = get_settings()
 DB_SESSION = None
+
+from .handlers import * #noqa  #calling it below to avoid cyclic import of fastapi app. and noqa indicates linting modules to ignore this call and not raise warning
 
 
 @app.on_event("startup")

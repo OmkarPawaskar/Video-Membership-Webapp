@@ -7,10 +7,13 @@ from fastapi.templating import Jinja2Templates
 settings = config.get_settings()
 templates = Jinja2Templates(directory= str(settings.templates_dir))
 
-def redirect(path, cookies:dict = {}):
+def redirect(path, cookies:dict = {}, remove_session=False):
     response = RedirectResponse(path, status_code=302)
     for k,v in cookies.items():
         response.set_cookie(key=k, value=v, httponly=True)
+    if remove_session is True:
+        response.set_cookie(key="session_ended", value=1, httponly=True)
+        response.delete_cookie(key="session_id")
     return response
 
 def render(request, template_name, context = {} , status_code: int = 200, cookies:dict = {}):
@@ -26,7 +29,7 @@ def render(request, template_name, context = {} , status_code: int = 200, cookie
     if len(cookies.keys()) > 0:
         #set http only cookies
         for k,v in cookies.items():
-            response.set_cookie(key=k ,value=v ,httponly=True) #httponly arg ensures user is not able to edit via js console.
+            response.set_cookie(key=k ,value=v ,httponly=True) #httponly arg ensures user is not able to edit via js console. ie as document.cookie
     
     #delete cookie
     #for key in cookies.keys():
