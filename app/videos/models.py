@@ -3,6 +3,8 @@ from cassandra.cqlengine import columns
 from cassandra.cqlengine.models import Model
 
 from app.config import get_settings
+from app.users.exceptions import InvalidUserIDException
+from app.videos.exceptions import InvalidYouTubeVideoURLException, VideoAlreadyAddedException
 from app.videos.extractors import extract_video_id
 from app.users.models import User
 
@@ -32,13 +34,13 @@ class Video(Model):
         # Service API - YouTube / Vimeo / etc
         host_id = extract_video_id(url)
         if host_id is None:
-            raise Exception("Invalid Youtube video URL")
+            raise InvalidYouTubeVideoURLException()
         user_exist = User.check_exist(user_id)
         if user_exist is None:
-            raise Exception("Invalid user_id")
+            raise InvalidUserIDException()
         # user_obj = User.by_user_id(user_id)
         # user_obj.display_name
         q = Video.objects.allow_filtering().filter(host_id=host_id, user_id=user_id)
         if q.count() != 0:
-            raise Exception("Video Already Added!")
+            raise VideoAlreadyAddedException()
         return Video.create(host_id=host_id,user_id=user_id,url=url)
