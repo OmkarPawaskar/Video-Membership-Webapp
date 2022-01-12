@@ -13,12 +13,14 @@ from .users.schemas import (
     UserLoginSchema
 )
 from .users.decorators import login_required
+from .videos.routers import router as video_router
 from . import db, utils, shortcuts
 from .shortcuts import redirect, render
 
 
 app = FastAPI()
 app.add_middleware(AuthenticationMiddleware, backend = JWTCookieBackend())
+app.include_router(video_router)
 
 #settings = get_settings()
 DB_SESSION = None
