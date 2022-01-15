@@ -36,7 +36,7 @@ def on_startup():
 
 @app.get('/', response_class=HTMLResponse)
 def homepage(request : Request):
-    print(request.user.username)
+    #print(request.user.username)
     if request.user.is_authenticated:
         return render(request, "dashboard.html", {}, status_code=200)
     return render(request, "home.html", {})

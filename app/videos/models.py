@@ -28,7 +28,11 @@ class Video(Model):
         return f"Video(title = {self.title}, host_id = {self.host_id}, host_service = {self.host_service}"
     
     def as_data(self):
-        return f"'{self.host_service}_id' : {self.host_id}"
+        return {f"{self.host_service}_id" : {self.host_id}, "path" : self.path}
+
+    @property
+    def path(self):
+        return f"/videos/{self.host_id}"
 
     @staticmethod
     def add_video(url,user_id=None):
@@ -37,13 +41,13 @@ class Video(Model):
         # Service API - YouTube / Vimeo / etc
         host_id = extract_video_id(url)
         if host_id is None:
-            raise InvalidYouTubeVideoURLException()
+            raise InvalidYouTubeVideoURLException("Invalid Youtube Video URL")
         user_exist = User.check_exist(user_id)
         if user_exist is None:
-            raise InvalidUserIDException()
+            raise InvalidUserIDException("Invalid user_id")
         # user_obj = User.by_user_id(user_id)
         # user_obj.display_name
         q = Video.objects.allow_filtering().filter(host_id=host_id, user_id=user_id)
         if q.count() != 0:
-            raise VideoAlreadyAddedException()
+            raise VideoAlreadyAddedException("Video Already added")
         return Video.create(host_id=host_id,user_id=user_id,url=url)
