@@ -25,17 +25,17 @@ class Video(Model):
         return self.__repr__()
 
     def __repr__(self):
-        return f"Video(title = {self.title}, host_id = {self.host_id}, host_service = {self.host_service}"
+        return f"Video(title = {self.title}, host_id = {self.host_id}, host_service = {self.host_service})"
     
     def as_data(self):
-        return {f"{self.host_service}_id" : {self.host_id}, "path" : self.path}
+        return {f"{self.host_service}_id" : self.host_id, "path" : self.path, "title": self.title}
 
     @property
     def path(self):
         return f"/videos/{self.host_id}"
 
     @staticmethod
-    def add_video(url,user_id=None):
+    def add_video(url,user_id=None, **kwargs):
         # extract video_id from url
         # video_id = host_id
         # Service API - YouTube / Vimeo / etc
@@ -50,4 +50,4 @@ class Video(Model):
         q = Video.objects.allow_filtering().filter(host_id=host_id, user_id=user_id)
         if q.count() != 0:
             raise VideoAlreadyAddedException("Video Already added")
-        return Video.create(host_id=host_id,user_id=user_id,url=url)
+        return Video.create(host_id=host_id,user_id=user_id,url=url, **kwargs)

@@ -9,6 +9,10 @@
 {% else %}
 <form method="POST">
     <div>
+        <label for="title">Title</label>
+        <input type="text" name="title" placeholder='Youtube Video Title' value="{% if title %}{{ title }}{% endif %}" /> 
+    </div>
+    <div>
         <label for="url">Youtube Link</label>
         <input type="text" name="url" placeholder='https://www.youtube.com/watch?v=GlDr6aKBtFg' value="{% if url %}{{ url }}{% endif %}" /> 
     </div>

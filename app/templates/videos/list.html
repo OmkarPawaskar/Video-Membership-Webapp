@@ -3,5 +3,8 @@
 {% block title %} Video | {{ super() }} {% endblock %}
 
 {% block content %}
-<h1>Video List : {{abc}}</h1>
+<h1>Video List : </h1>
+{% for object in object_list %}
+    {% if object.title != None  %}<a href="{{object.path}}"><li>{{object.title}}</li></a> {% endif %}
+{% endfor %}
 {% endblock %}

@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 from app.shortcuts import redirect, render
 from app.users.decorators import login_required
 from app import utils
+from app.videos.models import Video
 from app.videos.schemas import VideoCreateSchema
 
 router = APIRouter(
@@ -17,17 +18,18 @@ def video_create_view(request: Request):
 
 @router.post('/create', response_class=HTMLResponse)
 @login_required
-def video_create_view(request: Request, url:str = Form(...)):
+def video_create_view(request: Request, url:str = Form(...), title:str = Form(...)): #To declare a field as required, you may declare it using just an annotation, or you may use an ellipsis (...) as the value
     raw_data = {
+        "title" : title,
         "url" : url,
         "user_id" : request.user.username
     }
-    #print(request.user.username)
     data,errors = utils.valid_schema_data_or_error(raw_data, VideoCreateSchema)
     redirect_path = data.get('path') or "/videos/create"
     context ={
         "data" : data,
         "errors" : errors,
+        "title" : title,
         "url" : url,
     }
 
@@ -37,7 +39,11 @@ def video_create_view(request: Request, url:str = Form(...)):
 
 @router.get('/', response_class=HTMLResponse)
 def video_list_view(request: Request):
-    return render(request,"videos/list.html", {})
+    q = Video.objects.all().limit(100)
+    context = {
+        "object_list" : q
+    }
+    return render(request,"videos/list.html", context)
 
 @router.get('/detail', response_class=HTMLResponse)
 def video_detail_view(request: Request):
