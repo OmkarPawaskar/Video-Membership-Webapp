@@ -7,6 +7,7 @@ from app.users.exceptions import InvalidUserIDException
 from app.videos.exceptions import InvalidYouTubeVideoURLException, VideoAlreadyAddedException
 from app.videos.extractors import extract_video_id
 from app.users.models import User
+from app.shortcuts import templates
 
 settings = get_settings()
 
@@ -29,6 +30,13 @@ class Video(Model):
     
     def as_data(self):
         return {f"{self.host_service}_id" : self.host_id, "path" : self.path, "title": self.title}
+
+    def render(self):
+        base_name = self.host_service #youtube, vimeo
+        template_name = f"videos/renderers/{base_name}.html"
+        context = {"host_id" : self.host_id}
+        t = templates.get_template(template_name)
+        return t.render(context)
 
     @property
     def path(self):
