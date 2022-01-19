@@ -16,8 +16,8 @@ from .users.decorators import login_required
 from .videos.routers import router as video_router
 from .videos.models import Video
 
-from .watch_events.schemas import WatchEventSchema
 from .watch_events.models import WatchEvent
+from .watch_events.routers import router as watch_event_router
 
 from . import db, utils, shortcuts
 from .shortcuts import redirect, render
@@ -26,6 +26,7 @@ from .shortcuts import redirect, render
 app = FastAPI()
 app.add_middleware(AuthenticationMiddleware, backend = JWTCookieBackend())
 app.include_router(video_router)
+app.include_router(watch_event_router)
 
 #settings = get_settings()
 DB_SESSION = None
@@ -110,16 +111,3 @@ def signup_get_view(request : Request,
 def users_list_view():
     q = User.objects.all().limit(10)
     return list(q)
-
-@app.post('/watch-event', response_model = WatchEventSchema)
-def watch_event_view(request : Request, watch_event : WatchEventSchema):
-    cleaned_data = watch_event.dict()
-    data = cleaned_data.copy()
-    data.update({
-        "user_id" : request.user.username
-    }) 
-    print(data)
-    if request.user.is_authenticated:
-        WatchEvent.objects.create(**data)
-        return watch_event #or even cleaned_data can be returned
-    return watch_event
