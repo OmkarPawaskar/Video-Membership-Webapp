@@ -16,7 +16,9 @@ from .users.decorators import login_required
 from .videos.routers import router as video_router
 from .videos.models import Video
 
+from .watch_events.schemas import WatchEventSchema
 from .watch_events.models import WatchEvent
+
 from . import db, utils, shortcuts
 from .shortcuts import redirect, render
 
@@ -109,17 +111,15 @@ def users_list_view():
     q = User.objects.all().limit(10)
     return list(q)
 
-@app.post('/watch-event')
-def watch_event_view(request : Request, data : dict):
+@app.post('/watch-event', response_model = WatchEventSchema)
+def watch_event_view(request : Request, watch_event : WatchEventSchema):
+    cleaned_data = watch_event.dict()
+    data = cleaned_data.copy()
+    data.update({
+        "user_id" : request.user.username
+    }) 
     print(data)
     if request.user.is_authenticated:
-        obj = WatchEvent.objects.create(
-            host_id = data.get('videoId'),
-            user_id = request.user.username,
-            start_time = data.get('startTime'),
-            end_time = data.get('currentTime'),
-            duration = data.get('duration'),
-            complete = data.get('complete')
-        )
-        print(obj)
-    return {"working" : True}
+        WatchEvent.objects.create(**data)
+        return watch_event #or even cleaned_data can be returned
+    return watch_event
