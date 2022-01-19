@@ -87,9 +87,13 @@
     }
 
     function storeWatchEvent(){
+        var duration = player.getDuration()
         var data = {
             currentTime: currentTime,
-            videoId: videoId
+            startTime: initialStartTime,
+            duration: duration,
+            videoId: videoId,
+            complete: (duration * .98) < currentTime //.98 because duration is always atleast 1sec less than currentTime after completion
         }
         timeSinceLastSaved = 0;
         console.log('saving...', data)
