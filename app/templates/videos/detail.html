@@ -5,10 +5,10 @@
 {% block content %}
 <h1>Video Detail : </h1>
 
-{{host_id}}
-{{object}}
+{{object.title}}
+{{start_time}}
 
-<div id='yt-video' data-video-id="{{ host_id }}" data-start-time='0'></div>
+<div id='yt-video' data-video-id="{{ host_id }}" data-start-time={{start_time}}></div>
 
 
 <script>
