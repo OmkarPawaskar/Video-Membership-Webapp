@@ -19,12 +19,15 @@ from .videos.models import Video
 from .watch_events.models import WatchEvent
 from .watch_events.routers import router as watch_event_router
 
+from .playlists.routers import router as playlist_router
+
 from . import db, utils, shortcuts
 from .shortcuts import redirect, render
 
 
 app = FastAPI()
 app.add_middleware(AuthenticationMiddleware, backend = JWTCookieBackend())
+app.include_router(playlist_router)
 app.include_router(video_router)
 app.include_router(watch_event_router)
 
