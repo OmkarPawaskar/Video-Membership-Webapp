@@ -7,5 +7,17 @@
 
 {{object.title}}
 
+<div id="video-create-form">
+
+</div>
+
+<button hx-get='/videos/create'
+        hx-trigger = 'click'
+        hx-target = '#video-create-form'
+        hx-swap = 'beforeend'
+>
+Add Video Form
+</button>
+
 
 {% endblock %}
