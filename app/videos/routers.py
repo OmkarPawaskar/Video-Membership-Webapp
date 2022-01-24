@@ -24,7 +24,7 @@ def video_create_view(request: Request, is_htmx=Depends(is_htmx)):
 
 @router.post('/create', response_class=HTMLResponse)
 @login_required
-def video_create_view(request: Request, url:str = Form(...), title:str = Form(...)): #To declare a field as required, you may declare it using just an annotation, or you may use an ellipsis (...) as the value
+def video_create_view(request: Request, url:str = Form(...), title:str = Form(...),  is_htmx=Depends(is_htmx)): #To declare a field as required, you may declare it using just an annotation, or you may use an ellipsis (...) as the value
     raw_data = {
         "title" : title,
         "url" : url,
@@ -39,6 +39,17 @@ def video_create_view(request: Request, url:str = Form(...), title:str = Form(..
         "url" : url,
     }
 
+    if is_htmx:
+        """
+        Handle all HTMX requests
+        """
+        if len(errors) > 0:
+            return render(request, "videos/create.html", context)
+        context = {"path" : redirect_path, "title" : data.get('title')}
+        return render(request, "videos/htmx/link.html", context)
+    """
+    Handle default HTML requests
+    """
     if len(errors) > 0:
         return render(request, "videos/create.html", context, status_code=400)
     return redirect(redirect_path)
