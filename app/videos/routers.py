@@ -1,6 +1,12 @@
+import uuid
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import HTMLResponse
-from app.shortcuts import get_obj_or_404, redirect, render
+from app.shortcuts import (get_obj_or_404, 
+    redirect, 
+    render, 
+    is_htmx)
 from app.users.decorators import login_required
 from app import utils
 from app.videos.models import Video
@@ -11,12 +17,15 @@ router = APIRouter(
     prefix="/videos"
 )
 
-def is_htmx(request : Request):
-    return request.headers.get('hx-request') == "true"
+
 
 @router.get('/create', response_class=HTMLResponse)
 @login_required
-def video_create_view(request: Request, is_htmx=Depends(is_htmx)):
+def video_create_view(request: Request, 
+    playlist_id : Optional[uuid.UUID] =None,
+    is_htmx=Depends(is_htmx)
+    ):
+    print(playlist_id)
     if is_htmx:
         return render(request, "videos/htmx/create.html", {})
     return render(request,"videos/create.html", {})
@@ -24,7 +33,7 @@ def video_create_view(request: Request, is_htmx=Depends(is_htmx)):
 
 @router.post('/create', response_class=HTMLResponse)
 @login_required
-def video_create_view(request: Request, url:str = Form(...), title:str = Form(...),  is_htmx=Depends(is_htmx)): #To declare a field as required, you may declare it using just an annotation, or you may use an ellipsis (...) as the value
+def video_create_post_view(request: Request, url:str = Form(...), title:str = Form(...),  is_htmx=Depends(is_htmx)): #To declare a field as required, you may declare it using just an annotation, or you may use an ellipsis (...) as the value
     raw_data = {
         "title" : title,
         "url" : url,
