@@ -10,7 +10,7 @@ from app.shortcuts import (get_obj_or_404,
 from app.users.decorators import login_required
 from app import utils
 from app.videos.models import Video
-from app.videos.schemas import VideoCreateSchema
+from app.videos.schemas import VideoCreateSchema, VideoEditSchema
 from app.watch_events.models import WatchEvent
 
 router = APIRouter(
@@ -84,3 +84,38 @@ def video_detail_view(request: Request, host_id:str):
         "object" : q
     }
     return render(request,"videos/detail.html", context)
+
+@router.get('/{host_id}/edit', response_class=HTMLResponse)
+@login_required
+def video_edit_view(request: Request, host_id:str):
+    q = get_obj_or_404(Video, host_id=host_id)
+    
+    context = {
+        "object" : q
+    }
+    return render(request,"videos/edit.html", context)
+
+@router.post('/{host_id}/edit', response_class=HTMLResponse)
+@login_required
+def video_edit_post_view(
+    request: Request, 
+    host_id : str,
+    url:str = Form(...), 
+    title:str = Form(...),  
+    is_htmx=Depends(is_htmx)): #To declare a field as required, you may declare it using just an annotation, or you may use an ellipsis (...) as the value
+    raw_data = {
+        "title" : title,
+        "url" : url,
+        "user_id" : request.user.username
+    }
+    obj = get_obj_or_404(Video, host_id=host_id)
+    data,errors = utils.valid_schema_data_or_error(raw_data, VideoEditSchema)
+    context ={
+        "object" : obj
+    }
+    if len(errors) > 0:
+            return render(request, "videos/edit.html", context)
+
+    obj.title = data.get('title') or obj.title
+    obj.update_video_url(url, save=True)
+    return render(request, "videos/edit.html", context)
