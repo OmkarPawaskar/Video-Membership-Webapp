@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.users.exceptions import LoginRequiredException
 
 from app.main import app
-from app.shortcuts import redirect, render
+from app.shortcuts import is_htmx, redirect, render
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request, exc):
@@ -23,4 +23,8 @@ async def http_exception_handler(request, exc):
 
 @app.exception_handler(LoginRequiredException)
 async def http_exception_handler(request, exc):
-    return redirect(f"/login?next={request.url}", remove_session=True)
+    response = redirect(f"/login?next={request.url}", remove_session=True)
+    if is_htmx(request):
+        response.status_code = 200
+        response.headers['HX-Redirect'] = f"/login"
+    return response
