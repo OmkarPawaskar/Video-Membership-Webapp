@@ -5,6 +5,7 @@ from typing import Optional
 
 class VideoIndexSchema(BaseModel):
     objectID : str = Field(alias="host_id")
+    objectType: str = "Videos"
     title : Optional[str]
     path : str = Field(alias="host_id")
     # related -> playlist names    
@@ -15,6 +16,7 @@ class VideoIndexSchema(BaseModel):
 
 class PlaylistIndexSchema(BaseModel):
     objectID : uuid.UUID = Field(alias="db_id")
+    objectType: str = "Playlists"
     title : Optional[str]
     path : str = Field(default = "/")
     # related -> host_ids -> Video Title
